@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}registro - NutriApp{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3 class="text-center text-success mb-4">Crear Cuenta</h3>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                {{ message }}
+                <button class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('registro') }}">
+
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="text" name="nombres" class="form-control" placeholder="Nombre(s)" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="apellido" class="form-control" placeholder="Apellido(s)" required>
+                    </div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label text-success">Fecha de nacimiento</label>
+                    <input type="date" class="form-control" name="fecha_nacimiento" required>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label text-success">Género</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" value="hombre" required>
+                        <label class="form-check-label">Hombre</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" value="mujer">
+                        <label class="form-check-label">Mujer</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" value="otro">
+                        <label class="form-check-label">Prefiero no decirlo</label>
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="number" name="peso" class="form-control" placeholder="Peso (kg)" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="number" name="altura" class="form-control" placeholder="Altura (cm)" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <select name="nivel_actividad" class="form-select" required>
+                            <option disabled selected>Nivel de actividad</option>
+                            <option value="sedentario">Sedentario</option>
+                            <option value="ligero">Ligero</option>
+                            <option value="moderado">Moderado</option>
+                            <option value="activo">Activo</option>
+                            <option value="muy_activo">Muy activo</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label text-success">Objetivo principal</label>
+                    <select name="objetivo" class="form-select" required>
+                        <option disabled selected>Selecciona tu objetivo</option>
+                        <option value="bajar_peso">Bajar de peso</option>
+                        <option value="mantener_peso">Mantener peso</option>
+                        <option value="aumentar_masa_muscular">Aumentar masa muscular</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <input type="password" name="password" class="form-control" placeholder="Contraseña"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <input type="password" name="confirm_password" class="form-control"
+                                placeholder="Confirmar contraseña" required>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+
+
+        <button type="submit" class="btn btn-success w-100">Registrarte</button>
+
+        <p class="text-center mt-3">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('login') }}" class="fw-bold text-success">Inicia sesión</a>
+        </p>
+
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}

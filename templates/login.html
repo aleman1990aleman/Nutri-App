@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Login - NutriApp{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3 class="text-center text-success mb-4">Iniciar Sesión</h3>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                    {{ message }}
+                    <button class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('login') }}">
+
+                <div class="mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
+                </div>
+
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Entrar</button>
+
+                <p class="text-center mt-3">
+                    ¿No tienes cuenta?
+                    <a href="{{ url_for('registro') }}" class="fw-bold text-success">Regístrate</a>
+                </p>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
