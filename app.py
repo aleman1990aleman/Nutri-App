@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+import requests
 
 app = Flask(__name__)
 app.secret_key = "1234567890"  
@@ -92,102 +93,65 @@ def registro():
 
     return render_template("registro.html")
 
-@app.route("/tasa", methods=["GET", "POST"])
-def tasa():
-    tmb = None
-    get_total = None
+@app.route('/imc')
+def imc():
+    return render_template("imc.html")
+
+@app.route('/tbm')
+def tbm():
+    return render_template("tbm.html")
+
+
+@app.route('/gct')
+def gct():
+    return render_template("gct.html")
+
+@app.route('/pci')
+def pci():
+    return render_template("pci.html")
+
+
+@app.route('/busqueda')
+def busqueda():
+    return render_template("busqueda.html")
+
+@app.route('/educacion')
+def educacion():
+    return render_template("educacion.html")
+
+@app.route("/analizador_recetas", methods=["GET", "POST"])
+def analizador_recetas():
+    nutrientes = None
 
     if request.method == "POST":
-        peso = float(request.form.get("peso"))
-        altura = float(request.form.get("altura"))   
-        edad = float(request.form.get("edad"))
-        genero = request.form.get("genero")
-        actividad = request.form.get("actividad")
+        receta = request.form.get("receta")
 
-        if genero == "Hombre":
-            tmb = (10 * peso) + (6.25 * altura) - (5 * edad) + 5
-        else:
-            tmb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161
+        if not receta:
+            flash("Por favor ingresa una receta.", "error")
+            return render_template("analizador_recetas.html")
 
-        factores = {
-            "seden": 1.2,
-            "ligera": 1.375,
-            "moderada": 1.55,
-            "alta": 1.725,
+        API_KEY = "ao0tNQgF9iwaVSi3tV2ms7odgQ6e2D2Wl0q4bnmS"
+        url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={API_KEY}"
+
+        payload = {
+            "query": receta,
+            "dataType": ["SR Legacy", "Foundation", "Branded"],
+            "pageSize": 5
         }
 
-        get_total = tmb * factores.get(actividad, 1)
+        try:
+            respuesta = requests.post(url, json=payload)
+            data = respuesta.json()
 
-        tmb = round(tmb, 2)
-        get_total = round(get_total, 2)
+            if "foods" not in data or len(data["foods"]) == 0:
+                flash("No se encontraron nutrientes para esta receta.", "error")
+            else:
+                nutrientes = data["foods"][0].get("foodNutrients", [])
+        except Exception as e:
+            flash("Error al conectar con la API.", "error")
+            print("Error:", e)
 
-    return render_template("calculartmb.html", tmb=tmb, get_total=get_total)
+    return render_template("analizador_recetas.html", nutrientes=nutrientes)
 
-
-@app.route("/imc", methods=["GET", "POST"])
-def imc():
-    imc = None
-    categoria = None
-
-    if request.method == "POST":
-        peso = float(request.form.get("peso"))
-        altura = float(request.form.get("altura")) / 100  
-
-        imc_valor = peso / (altura ** 2)
-        imc = round(imc_valor, 2)
-
-        if imc < 18.5:
-            categoria = "Bajo peso"
-        elif imc < 25:
-            categoria = "Peso normal"
-        elif imc < 30:
-            categoria = "Sobrepeso"
-        elif imc < 35:
-            categoria = "Obesidad grado I"
-        elif imc < 40:
-            categoria = "Obesidad grado II"
-        else:
-            categoria = "Obesidad grado III (mórbida)"
-
-    return render_template("calcuimc.html", imc=imc, categoria=categoria)
-
-@app.route("/pesoideal", methods=["GET", "POST"])
-def pesoideal():
-    resultado = None
-
-    if request.method == "POST":
-        altura = float(request.form.get("altura"))  
-        genero = request.form.get("genero")
-
-        altura_pulg = altura / 2.54  
-
-        if genero == "Hombre":
-            resultado = 50 + 2.3 * (altura_pulg - 60)
-        else:
-            resultado = 45.5 + 2.3 * (altura_pulg - 60)
-
-        resultado = round(resultado, 2)
-
-    return render_template("pesoideal.html", resultado=resultado)
-
-
-@app.route("/macros", methods=["GET", "POST"])
-def macros():
-    proteinas = grasas = carbohidratos = None
-
-    if request.method == "POST":
-        calorias = float(request.form.get("calorias"))
-
-        proteinas = round((calorias * 0.30) / 4, 1)
-        grasas = round((calorias * 0.25) / 9, 1)
-        carbohidratos = round((calorias * 0.45) / 4, 1)
-
-    return render_template(
-        "macros.html",
-        proteinas=proteinas,
-        grasas=grasas,
-        carbohidratos=carbohidratos
-    )
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
