@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Analizador de Recetas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-3">🥗 Analizador de Recetas</h2>
+
+        <form method="POST">
+            <label class="form-label"><strong>Ingresa tu receta o lista de ingredientes:</strong></label>
+            <textarea name="receta" class="form-control mb-3" rows="5"
+                      placeholder="Ejemplo: 2 huevos, 100g de arroz, 1 cucharada de aceite..."></textarea>
+
+            <button type="submit" class="btn btn-primary w-100">Analizar Nutrientes</button>
+        </form>
+
+        {% if nutrientes %}
+        <hr>
+        <h4 class="mt-3">🔬 Resultados Nutricionales</h4>
+
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nutriente</th>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in nutrientes %}
+                <tr>
+                    <td>{{ n.nutrientName }}</td>
+                    <td>{{ n.value }}</td>
+                    <td>{{ n.unitName }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
