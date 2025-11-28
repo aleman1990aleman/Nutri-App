@@ -6,9 +6,10 @@ app.secret_key = "1234567890"
 USUARIOS_REGISTRADOS = {}
 
 
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html") 
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -93,27 +94,120 @@ def registro():
 
     return render_template("registro.html")
 
-@app.route('/imc')
+@app.route('/macros', methods=['GET', 'POST'])
+def macros():
+    proteinas = grasas = carbohidratos = None
+
+    if request.method == "POST":
+        calorias = float(request.form.get("calorias"))
+
+        proteinas = round((calorias * 0.30) / 4, 1)
+        grasas = round((calorias * 0.25) / 9, 1)
+        carbohidratos = round((calorias * 0.45) / 4, 1)
+
+    return render_template(
+        "macros.html",
+        proteinas=proteinas,
+        grasas=grasas,
+        carbohidratos=carbohidratos
+    )
+
+
+@app.route('/imc', methods=['GET', 'POST'])
 def imc():
-    return render_template("imc.html")
+    resultado = None
+    categoria = None
 
-@app.route('/tbm')
+    if request.method == 'POST':
+        peso = float(request.form.get("peso"))
+        altura = float(request.form.get("altura"))
+
+        resultado = round(peso / (altura ** 2), 2)
+
+        if resultado < 18.5:
+            categoria = "Bajo peso"
+        elif resultado < 25:
+            categoria = "Normal"
+        elif resultado < 30:
+            categoria = "Sobrepeso"
+        else:
+            categoria = "Obesidad"
+
+    return render_template("calcuimc.html", resultado=resultado, categoria=categoria)
+
+@app.route('/tbm', methods=['GET', 'POST'])
 def tbm():
-    return render_template("tbm.html")
+    resultado = None
+
+    if request.method == 'POST':
+        sexo = request.form.get("sexo")
+        peso = float(request.form.get("peso"))
+        altura_m = float(request.form.get("altura"))  
+        edad = int(request.form.get("edad"))
+
+        altura_cm = altura_m * 100  
+
+        if sexo == "hombre":
+            resultado = 10 * peso + 6.25 * altura_cm - 5 * edad + 5
+        else:
+            resultado = 10 * peso + 6.25 * altura_cm - 5 * edad - 161
+
+        resultado = round(resultado, 2)
+
+    return render_template("calculartmb.html", resultado=resultado)
 
 
-@app.route('/gct')
+
+@app.route('/gct', methods=['GET', 'POST'])
 def gct():
-    return render_template("gct.html")
+    resultado = None
 
-@app.route('/pci')
+    if request.method == 'POST':
+        sexo = request.form.get("sexo")
+        peso = float(request.form.get("peso"))
+        altura_m = float(request.form.get("altura")) 
+        edad = int(request.form.get("edad"))
+        actividad = request.form.get("actividad")
+
+        altura_cm = altura_m * 100  
+
+        if sexo == "hombre":
+            tbm = 10 * peso + 6.25 * altura_cm - 5 * edad + 5
+        else:
+            tbm = 10 * peso + 6.25 * altura_cm - 5 * edad - 161
+
+        factores = {
+            "sedentario": 1.2,
+            "ligero": 1.375,
+            "moderado": 1.55,
+            "alto": 1.725,
+            "extremo": 1.9
+        }
+
+        resultado = tbm * factores.get(actividad, 1.2)
+        resultado = round(resultado, 2)
+
+    return render_template("calculadora_gct.html", resultado=resultado)
+
+@app.route('/pci', methods=['GET', 'POST'])
 def pci():
-    return render_template("pci.html")
+    resultado = None 
 
+    if request.method == 'POST':
+        sexo = request.form.get("sexo")
+        altura_m = float(request.form.get("altura"))
 
-@app.route('/busqueda')
-def busqueda():
-    return render_template("busqueda.html")
+        altura_cm = altura_m * 100
+
+        if sexo == "hombre":
+            resultado = 50 + 0.91 * (altura_cm - 152.4)
+        else:
+            resultado = 45.5 + 0.91 * (altura_cm - 152.4)
+
+        resultado = round(resultado, 2)
+
+    return render_template("pesoideal.html", resultado=resultado)
+
 
 @app.route('/educacion')
 def educacion():
