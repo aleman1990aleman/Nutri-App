@@ -10,78 +10,86 @@
 </head>
 
 <body class="bg-success-subtle">
-  <nav class="navbar navbar-expand-lg bg-white shadow-sm">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+  <div class="container-fluid">
 
-      <a class="navbar-brand fw-bold text-success" href="{{ url_for('index') }}">
-        NutriApp
-      </a>
+    <a class="navbar-brand fw-bold text-success" href="{{ url_for('index') }}">
+      NutriApp
+    </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">
-              Inicio
-            </a>
-          </li>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">
+            Inicio
+          </a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('imc') }}">IMC</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('imc') }}">IMC</a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('tbm') }}">TMB</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('tbm') }}">TMB</a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('gct') }}">GCT</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('gct') }}">GCT</a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('pci') }}">Peso Ideal</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('pci') }}">Peso Ideal</a>
+        </li>
 
-          
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('macros') }}">Macronutrientes</a>
-        </li> 
+        </li>
 
-        </ul>
+        {% if session.get('logueado') %}
+        <!-- 🔥 Nuevo enlace visible solo cuando inicia sesión -->
+        <li class="nav-item">
+          <a class="nav-link fw-bold text-primary" href="{{ url_for('analizador_recetas') }}">
+            Analizador de Recetas
+          </a>
+        </li>
+        {% endif %}
+      </ul>
 
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          {% if session.get('logueado') %}
-          <li class="nav-item">
-            <span class="nav-link fw-bold text-success">
-              Hola, {{ session.get('usuario_nombre') }}
-            </span>
-          </li>
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {% if session.get('logueado') %}
+        <li class="nav-item">
+          <span class="nav-link fw-bold text-success">
+            Hola, {{ session.get('usuario_nombre') }}
+          </span>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link text-danger" href="{{ url_for('logout') }}">
-              Cerrar sesión
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+            Cerrar sesión
+          </a>
+        </li>
 
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-          </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link fw-bold text-success" href="{{ url_for('registro') }}">
-              Registro
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
+        <li class="nav-item">
+          <a class="nav-link fw-bold text-success" href="{{ url_for('registro') }}">
+            Registro
+          </a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
+
 
 
   {% block content %}

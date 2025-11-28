@@ -112,7 +112,6 @@ def macros():
         carbohidratos=carbohidratos
     )
 
-
 @app.route('/imc', methods=['GET', 'POST'])
 def imc():
     resultado = None
@@ -120,9 +119,10 @@ def imc():
 
     if request.method == 'POST':
         peso = float(request.form.get("peso"))
-        altura = float(request.form.get("altura"))
+        altura_cm = float(request.form.get("altura"))   
+        altura_m = altura_cm / 100                      
 
-        resultado = round(peso / (altura ** 2), 2)
+        resultado = round(peso / (altura_m ** 2), 2)
 
         if resultado < 18.5:
             categoria = "Bajo peso"
@@ -135,6 +135,7 @@ def imc():
 
     return render_template("calcuimc.html", resultado=resultado, categoria=categoria)
 
+
 @app.route('/tbm', methods=['GET', 'POST'])
 def tbm():
     resultado = None
@@ -142,10 +143,8 @@ def tbm():
     if request.method == 'POST':
         sexo = request.form.get("sexo")
         peso = float(request.form.get("peso"))
-        altura_m = float(request.form.get("altura"))  
+        altura_cm = float(request.form.get("altura"))   
         edad = int(request.form.get("edad"))
-
-        altura_cm = altura_m * 100  
 
         if sexo == "hombre":
             resultado = 10 * peso + 6.25 * altura_cm - 5 * edad + 5
@@ -157,7 +156,6 @@ def tbm():
     return render_template("calculartmb.html", resultado=resultado)
 
 
-
 @app.route('/gct', methods=['GET', 'POST'])
 def gct():
     resultado = None
@@ -165,11 +163,9 @@ def gct():
     if request.method == 'POST':
         sexo = request.form.get("sexo")
         peso = float(request.form.get("peso"))
-        altura_m = float(request.form.get("altura")) 
+        altura_cm = float(request.form.get("altura"))  
         edad = int(request.form.get("edad"))
         actividad = request.form.get("actividad")
-
-        altura_cm = altura_m * 100  
 
         if sexo == "hombre":
             tbm = 10 * peso + 6.25 * altura_cm - 5 * edad + 5
@@ -184,20 +180,18 @@ def gct():
             "extremo": 1.9
         }
 
-        resultado = tbm * factores.get(actividad, 1.2)
-        resultado = round(resultado, 2)
+        resultado = round(tbm * factores.get(actividad, 1.2), 2)
 
     return render_template("calculadora_gct.html", resultado=resultado)
 
+
 @app.route('/pci', methods=['GET', 'POST'])
 def pci():
-    resultado = None 
+    resultado = None
 
     if request.method == 'POST':
         sexo = request.form.get("sexo")
-        altura_m = float(request.form.get("altura"))
-
-        altura_cm = altura_m * 100
+        altura_cm = float(request.form.get("altura")) 
 
         if sexo == "hombre":
             resultado = 50 + 0.91 * (altura_cm - 152.4)
@@ -207,6 +201,7 @@ def pci():
         resultado = round(resultado, 2)
 
     return render_template("pesoideal.html", resultado=resultado)
+
 
 
 @app.route('/educacion')
